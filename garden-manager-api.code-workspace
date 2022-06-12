@@ -1,8 +1,33 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.multiCursorPaste": "full",
+    "editor.tabCompletion": "on",
+    "npm.enableRunFromFolder": true,
+    "editor.tabSize": 2,
+    "editor.renderWhitespace": "selection",
+    "files.insertFinalNewline": true
+  },
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "eamodio.gitlens",
+      "visualstudioexptteam.vscodeintellicode",
+      "amatiasq.sort-imports",
+      "ms-vscode.vscode-typescript-next",
+      "shardulm94.trailing-spaces",
+      "coenraads.bracket-pair-colorizer-2",
+      "stringham.move-ts",
+      "amatiasq.sort-imports"
+    ]
+  }
 }

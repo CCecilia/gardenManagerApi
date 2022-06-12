@@ -9,20 +9,25 @@ const morgan = require('morgan');
 
 dotenv.config();
 
-mongoose.connect(getDatabaseUri())
+mongoose
+  .connect(getDatabaseUri())
   .then(() => console.log('Database Connected'))
   .catch((error) => console.error(error));
 
 const app = express();
 
-app.use(cors({
-  origin: ['http://localhost:3000']
-}));
+app.use(
+  cors({
+    origin: ['http://localhost:3000'],
+  })
+);
 
 app.use(session({ secret: process.env.SESSION_SECRET }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+app.use(
+  morgan(':method :url :status :res[content-length] - :response-time ms')
+);
 
 app.post('/users/signup/', user.signup);
 app.post('/users/signin/', user.signin);
