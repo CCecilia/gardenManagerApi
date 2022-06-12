@@ -10,7 +10,7 @@
     "format": "prettier ./src"
   },
   "keywords": [],
-  "author": "",
+  "author": "christian cecilia",
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
