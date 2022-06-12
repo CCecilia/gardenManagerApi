@@ -1,19 +1,27 @@
-import { Schema } from 'mongoose';
+import { Model, Schema, model } from 'mongoose';
+
 import bcrypt from 'bcrypt';
 
-interface UserInterface {
-    name: string;
+export interface UserInterface {
     email: string;
-    password: string
+    password: string,
+    accessToken: string,
 }
 
-export const userSchema = new Schema<UserInterface>({
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true }
+export interface UserMethods {
+    comparePassword(candidatePassword: string): boolean
+}
+
+export type UserModel = Model<UserInterface, {}, UserMethods>;
+
+export const UserSchema = new Schema<UserInterface, UserModel, UserMethods>({
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    accessToken: { type: String, required: true },
 });
 
-userSchema.pre('save', function(): void {
+UserSchema.pre('save', function(): void {
+    console.log('pre-save user')
     const user = this;
 
     // only hash the password if it has been modified (or is new)
@@ -31,9 +39,9 @@ userSchema.pre('save', function(): void {
     });
 });
 
-userSchema.methods.comparePassword = function(candidatePassword: string, cb: (err?: Error, isMatch?: boolean) => boolean) {
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-        if (err) return cb(err);
-        cb(undefined, isMatch);
-    });
-};
+UserSchema.method('comparePassword',async function comparePassword(candidatePassword: string): Promise<boolean> {
+    const result = await bcrypt.compare(this.password, candidatePassword);
+    return result;
+});
+
+export const User = model<UserInterface, UserModel, UserMethods>('User', UserSchema);
