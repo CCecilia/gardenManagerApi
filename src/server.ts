@@ -1,3 +1,5 @@
+import { verifyToken } from './middleware/auth.jwt';
+
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
@@ -6,6 +8,8 @@ const { getDatabaseUri } = require('./utilities/database');
 const user = require('./routes/user');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const plant = require('./routes/plant');
+const headerMiddleware = require('./middleware/header');
 
 dotenv.config();
 
@@ -29,8 +33,15 @@ app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms')
 );
 
-app.post('/users/signup/', user.signup);
-app.post('/users/signin/', user.signin);
+app.post('/users/signup/', headerMiddleware.jsonContent, user.signup);
+app.post('/users/signin/', headerMiddleware.jsonContent, user.signin);
+
+const plantMiddleware = [verifyToken, headerMiddleware.jsonContent];
+app.get('/plant/:plantId', plantMiddleware, plant.read);
+app.post('/plant', plantMiddleware, plant.create);
+app.get('/plant', plantMiddleware, plant.readAll);
+app.put('/plant', plantMiddleware, plant.update);
+app.delete('/plant', plantMiddleware, plant.del);
 
 app.listen(process.env.PORT, function () {
   console.log('Server is running on Port: ' + process.env.PORT);
