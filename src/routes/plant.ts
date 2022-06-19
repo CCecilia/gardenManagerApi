@@ -13,7 +13,7 @@ export const create = async (
 
   if (req.body) {
     requiredProperties.forEach((required: string) => {
-      if (!req.body.hasOwnProperty(required)) {
+      if (!Object.prototype.hasOwnProperty.call(req.body, required)) {
         return res
           .status(400)
           .send({ message: `missing required parameter | ${required}` });
@@ -24,10 +24,10 @@ export const create = async (
   if (!req.body.batch) {
     return res.status(400).json({
       message: 'batch amount required, must be greater then 0'
-    })
+    });
   };
 
-  let newPlants: {
+  const newPlants: {
     genus: string,
     species: string,
     commonName: string
@@ -90,7 +90,7 @@ export const update = async (req: TypedRequestBody<{id: string}>, res) => {
 
   if (req.body) {
     requiredProperties.forEach((required: string) => {
-      if (!req.body.hasOwnProperty(required)) {
+      if (!Object.prototype.hasOwnProperty.call(req.body, required)) {
         return res
           .status(400)
           .send({ message: `missing required parameter | ${required}` });
