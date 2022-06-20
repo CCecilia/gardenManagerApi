@@ -51,5 +51,16 @@
     "execMap": {
       "ts": "ts-node"
     }
+  },
+  "importSort": {
+    ".js, .jsx": {
+      "style": "eslint",
+      "options": {}
+    },
+    ".ts, .tsx": {
+      "parser": "typescript",
+      "style": "eslint",
+      "options": {}
+    }
   }
 }
