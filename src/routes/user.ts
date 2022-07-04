@@ -1,9 +1,8 @@
-import { User, UserSchema } from '../models/user';
+import { User } from '../models/user';
 
 import { MongoServerError } from 'mongodb';
 import { SignInFormData } from 'types/signInFormData.type';
 import { TypedRequestBody } from 'types/request.interface';
-import mongoose from 'mongoose';
 
 const jwt = require('jsonwebtoken');
 
@@ -50,7 +49,6 @@ export const signup = async (req: TypedRequestBody<SignInFormData>, res) => {
 
 export const signin = async (req: TypedRequestBody<SignInFormData>, res) => {
   const { email, password } = req.body;
-  const User = mongoose.model('Users', UserSchema);
   const query: any = await User.findOne({ email }).exec();
 
   if (query) {

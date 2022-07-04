@@ -11,6 +11,7 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import * as PlantRoutes from './routes/plant';
 import * as CropRoutes from './routes/crop';
+import * as NutrientBatchRoutes from './routes/nutrientBatch';
 
 dotenv.config();
 
@@ -42,9 +43,19 @@ app.post('/users/signin/', jsonContent, UserRoutes.signin);
 //#region PlantRoutes
 const plantMiddleware = [verifyToken, jsonContent];
 app.get('/plant/:plantId', plantMiddleware, PlantRoutes.read);
-app.post('/plant', plantMiddleware, PlantRoutes.create);
+const plantCreateMiddleware = [
+  verifyToken,
+  jsonContent,
+  checkRquiredProps(['genus', 'species', 'commonName', 'batch']),
+];
+app.post('/plant', plantCreateMiddleware, PlantRoutes.create);
 app.get('/plant', plantMiddleware, PlantRoutes.readAll);
-app.put('/plant', plantMiddleware, PlantRoutes.update);
+const plantUpdateMiddleware = [
+  verifyToken,
+  jsonContent,
+  checkRquiredProps(['id']),
+];
+app.put('/plant', plantUpdateMiddleware, PlantRoutes.update);
 app.delete('/plant', plantMiddleware, PlantRoutes.del);
 //#endregion PlantRoutes
 
@@ -59,9 +70,44 @@ const cropCreateMiddleware = [
 ];
 app.post('/crop', cropCreateMiddleware, CropRoutes.create);
 app.get('/crop', cropMiddleware, CropRoutes.readAll);
-app.put('/crop', cropMiddleware, CropRoutes.update);
+const cropUpdateMiddleware = [
+  verifyToken,
+  jsonContent,
+  checkRquiredProps(['id']),
+];
+app.put('/crop', cropUpdateMiddleware, CropRoutes.update);
 app.delete('/crop', cropMiddleware, CropRoutes.del);
 //#endregion CropRoutes
+
+//#region NutrientBatch
+const nutrientBatchMiddleware = [verifyToken, jsonContent];
+app.get('/nutrientBatch/:nutrientBatchId', nutrientBatchMiddleware, NutrientBatchRoutes.read);
+
+const nutrientBatchCreateMiddleware = [
+  verifyToken,
+  jsonContent,
+  checkRquiredProps([
+    'totalWaterGallons',
+    'totalFloraMicroMls',
+    'totalFloraBloomMls',
+    'totalFloraGroMls',
+    'phDownMls',
+    'phUpMls',
+    'startingPh',
+    'endingPh',
+    'applications'
+  ]),
+];
+app.post('/nutrientBatch', nutrientBatchCreateMiddleware, NutrientBatchRoutes.create);
+app.get('/nutrientBatch', nutrientBatchMiddleware, NutrientBatchRoutes.readAll);
+const nutrientBatchUpdateMiddleware = [
+  verifyToken,
+  jsonContent,
+  checkRquiredProps(['id']),
+];
+app.put('/nutrientBatch', nutrientBatchUpdateMiddleware, NutrientBatchRoutes.update);
+app.delete('/nutrientBatch', nutrientBatchMiddleware, NutrientBatchRoutes.del);
+//#endregion NutrientBatchRoutes
 
 app.listen(process.env.PORT, function () {
   console.log('Server is running on Port: ' + process.env.PORT);

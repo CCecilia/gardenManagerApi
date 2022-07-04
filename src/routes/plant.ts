@@ -1,26 +1,13 @@
-import { Plant, PlantSchema } from '../models/plant';
+import { Plant } from '../models/plant';
 import { TypedRequestBody, TypedRequestParams } from 'types/request.interface';
 
 import { MongoServerError } from 'mongodb';
 import { PlantCreateFormData } from 'types/plant.create.formData.type';
-import mongoose from 'mongoose';
 
 export const create = async (
   req: TypedRequestBody<PlantCreateFormData>,
   res
 ) => {
-  const requiredProperties = ['genus', 'species', 'commonName', 'batch'];
-
-  if (req.body) {
-    requiredProperties.forEach((required: string) => {
-      if (!Object.prototype.hasOwnProperty.call(req.body, required)) {
-        return res
-          .status(400)
-          .send({ message: `missing required parameter | ${required}` });
-      }
-    });
-  }
-
   if (!req.body.batch) {
     return res.status(400).json({
       message: 'batch amount required, must be greater then 0',
@@ -61,7 +48,6 @@ export const read = async (
     });
   }
 
-  const Plant = mongoose.model('Plants', PlantSchema);
   const query: any = await Plant.findById(req.params.plantId).exec();
 
   if (query) {
@@ -74,7 +60,6 @@ export const read = async (
 };
 
 export const readAll = async (_req: TypedRequestParams<{}>, res) => {
-  const Plant = mongoose.model('Plants', PlantSchema);
   const query: any = await Plant.find({}).catch((error: MongoServerError) => {
     return res.status(400).json({
       message: error.message,
@@ -91,19 +76,12 @@ export const readAll = async (_req: TypedRequestParams<{}>, res) => {
 };
 
 export const update = async (req: TypedRequestBody<{ id: string }>, res) => {
-  const requiredProperties = ['id'];
-
-  if (req.body) {
-    requiredProperties.forEach((required: string) => {
-      if (!Object.prototype.hasOwnProperty.call(req.body, required)) {
-        return res
-          .status(400)
-          .send({ message: `missing required parameter | ${required}` });
-      }
+  const results = await Plant.findByIdAndUpdate(req.body.id, req.body)
+    .exec()
+    .catch((error: MongoServerError) => {
+      return res.status(400).json({message: error.errmsg})
     });
-  }
 
-  const results = await Plant.findByIdAndUpdate(req.body.id, req.body).exec();
   return res.status(200).json(results);
 };
 
@@ -114,7 +92,6 @@ export const del = async (req, res) => {
     });
   }
 
-  const Plant = mongoose.model('Plants', PlantSchema);
   const results: any = await Plant.findByIdAndDelete(req.query.plantId).exec();
 
   if (results) {
