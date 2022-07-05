@@ -1,8 +1,5 @@
-import { checkRquiredProps } from './middleware/requiredProperties';
 import express from 'express';
-import { jsonContent } from './middleware/header';
 import session from 'express-session';
-import { verifyToken } from './middleware/auth.jwt';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { getDatabaseUri } from './utilities/database';
@@ -12,6 +9,10 @@ import morgan from 'morgan';
 import * as PlantRoutes from './routes/plant';
 import * as CropRoutes from './routes/crop';
 import * as NutrientBatchRoutes from './routes/nutrientBatch';
+import * as UserRoutesMiddleware from './middleware/userRoutesMiddleware';
+import * as PlantRoutesMiddleware from './middleware/plantRoutesMiddleware';
+import * as CropRoutesMiddleware from './middleware/cropRoutesMiddleware';
+import * as NutrientBatchRoutesMiddleware from './middleware/nutrientBatchRoutesMiddleware';
 
 dotenv.config();
 
@@ -36,77 +37,35 @@ app.use(
 );
 
 //#region UserRoutes
-app.post('/users/signup/', jsonContent, UserRoutes.signup);
-app.post('/users/signin/', jsonContent, UserRoutes.signin);
+app.post('/users/signup/', UserRoutesMiddleware.signUp, UserRoutes.signup);
+app.post('/users/signin/', UserRoutesMiddleware.signIn, UserRoutes.signin);
 //#endregion UserRoutes
 
 //#region PlantRoutes
-const plantMiddleware = [verifyToken, jsonContent];
-app.get('/plant/:plantId', plantMiddleware, PlantRoutes.read);
-const plantCreateMiddleware = [
-  verifyToken,
-  jsonContent,
-  checkRquiredProps(['genus', 'species', 'commonName', 'batch']),
-];
-app.post('/plant', plantCreateMiddleware, PlantRoutes.create);
-app.get('/plant', plantMiddleware, PlantRoutes.readAll);
-const plantUpdateMiddleware = [
-  verifyToken,
-  jsonContent,
-  checkRquiredProps(['id']),
-];
-app.put('/plant', plantUpdateMiddleware, PlantRoutes.update);
-app.delete('/plant', plantMiddleware, PlantRoutes.del);
+app.get('/plant/:plantId', PlantRoutesMiddleware.read, PlantRoutes.read);
+app.post('/plant', PlantRoutesMiddleware.create, PlantRoutes.create);
+app.get('/plant', PlantRoutesMiddleware.read, PlantRoutes.readAll);
+app.put('/plant', PlantRoutesMiddleware.update, PlantRoutes.update);
+app.delete('/plant', PlantRoutesMiddleware.del, PlantRoutes.del);
 //#endregion PlantRoutes
 
 //#region CropRoutes
-const cropMiddleware = [verifyToken, jsonContent];
-app.get('/crop/:cropId', cropMiddleware, CropRoutes.read);
-
-const cropCreateMiddleware = [
-  verifyToken,
-  jsonContent,
-  checkRquiredProps(['name', 'plants']),
-];
-app.post('/crop', cropCreateMiddleware, CropRoutes.create);
-app.get('/crop', cropMiddleware, CropRoutes.readAll);
-const cropUpdateMiddleware = [
-  verifyToken,
-  jsonContent,
-  checkRquiredProps(['id']),
-];
-app.put('/crop', cropUpdateMiddleware, CropRoutes.update);
-app.delete('/crop', cropMiddleware, CropRoutes.del);
+// app.post('/crop/addNutrientBatch', CropRoutesMiddleware.addNutrientBatch, CropRoutes.addNutrientBatch);
+app.get('/crop/plantData', CropRoutesMiddleware.readCropPlantData, CropRoutes.readCropPlantData);
+app.get('/crop/nutrientBatchData', CropRoutesMiddleware.readNutrientBatchData, CropRoutes.readNutrientBatchData);
+app.get('/crop/:cropId', CropRoutesMiddleware.read, CropRoutes.read);
+app.post('/crop', CropRoutesMiddleware.create, CropRoutes.create);
+app.get('/crop', CropRoutesMiddleware.read, CropRoutes.readAll);
+app.put('/crop', CropRoutesMiddleware.update, CropRoutes.update);
+app.delete('/crop', CropRoutesMiddleware.del, CropRoutes.del);
 //#endregion CropRoutes
 
 //#region NutrientBatch
-const nutrientBatchMiddleware = [verifyToken, jsonContent];
-app.get('/nutrientBatch/:nutrientBatchId', nutrientBatchMiddleware, NutrientBatchRoutes.read);
-
-const nutrientBatchCreateMiddleware = [
-  verifyToken,
-  jsonContent,
-  checkRquiredProps([
-    'totalWaterGallons',
-    'totalFloraMicroMls',
-    'totalFloraBloomMls',
-    'totalFloraGroMls',
-    'phDownMls',
-    'phUpMls',
-    'startingPh',
-    'endingPh',
-    'applications'
-  ]),
-];
-app.post('/nutrientBatch', nutrientBatchCreateMiddleware, NutrientBatchRoutes.create);
-app.get('/nutrientBatch', nutrientBatchMiddleware, NutrientBatchRoutes.readAll);
-const nutrientBatchUpdateMiddleware = [
-  verifyToken,
-  jsonContent,
-  checkRquiredProps(['id']),
-];
-app.put('/nutrientBatch', nutrientBatchUpdateMiddleware, NutrientBatchRoutes.update);
-app.delete('/nutrientBatch', nutrientBatchMiddleware, NutrientBatchRoutes.del);
+app.get('/nutrientBatch/:nutrientBatchId', NutrientBatchRoutesMiddleware.read, NutrientBatchRoutes.read);
+app.post('/nutrientBatch', NutrientBatchRoutesMiddleware.create, NutrientBatchRoutes.create);
+app.get('/nutrientBatch', NutrientBatchRoutesMiddleware.read, NutrientBatchRoutes.readAll);
+app.put('/nutrientBatch', NutrientBatchRoutesMiddleware.update, NutrientBatchRoutes.update);
+app.delete('/nutrientBatch', NutrientBatchRoutesMiddleware.del, NutrientBatchRoutes.del);
 //#endregion NutrientBatchRoutes
 
 app.listen(process.env.PORT, function () {

@@ -86,12 +86,6 @@ export const update = async (req: TypedRequestBody<{ id: string }>, res) => {
 };
 
 export const del = async (req, res) => {
-  if (!req.query || !req.query.plantId) {
-    return res.status(400).json({
-      message: 'missing required param | plantId',
-    });
-  }
-
   const results: any = await Plant.findByIdAndDelete(req.query.plantId).exec();
 
   if (results) {

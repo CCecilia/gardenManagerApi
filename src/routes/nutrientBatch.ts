@@ -1,6 +1,6 @@
 import { MongoServerError } from 'mongodb';
 import { NutrientBatchCreateFormData } from 'types/nutrientBatch.formData.type';
-import { TypedRequestBody, TypedRequestParams } from 'types/request.interface';
+import { TypedRequestBody, TypedRequestParams, TypedRequestQueryParams } from 'types/request.interface';
 import { NutrientBatch } from './../models/nutrientBatch';
 
 export const create = async (req: TypedRequestBody<NutrientBatchCreateFormData>, res) => {
@@ -78,12 +78,7 @@ export const update = async (req: TypedRequestBody<{ id: string }>, res) => {
   return res.status(200).json(results);
 };
 
-export const del = async (req, res) => {
-  if (!req.query || !req.query.nutrientBatchId) {
-    return res.status(400).json({
-      message: 'missing required param | nutrientBatchId',
-    });
-  }
+export const del = async (req: TypedRequestQueryParams<{nutrientBatchId: string}>, res) => {
   const results: any = await NutrientBatch.findByIdAndDelete(req.query.nutrientBatchId).exec();
 
   if (results) {
