@@ -5,15 +5,20 @@ interface IPlantStage {
   cycleNumber: number;
 }
 
+interface IGrowthLog {
+  img: {
+    data: Buffer,
+    contentType: string
+  };
+  dateCreated: Date;
+  numbersOfLeaves: number;
+  heightInches: number;
+  currentStage: IPlantStage;
+}
+
 export interface IPlant {
   germinationDate: Date;
   dateCreated: Date;
-  growth: [number];
-  height: number;
-  nutrientMix: {
-    name: string;
-    amount: number;
-  };
   location: {
     area: string;
     column: number;
@@ -21,7 +26,6 @@ export interface IPlant {
   };
   stages: IPlantStage[];
   currentStage: IPlantStage;
-  numberOfLeaves: number;
   hoursOfLight: number;
   notes: string[];
   harvested: boolean;
@@ -31,11 +35,23 @@ export interface IPlant {
   variety: string;
   numberOfLumensExposure: number;
   dailyWaterUsage: number;
+  growthLogs: IGrowthLog[];
 }
 
 const PlantStage = new Schema<IPlantStage>({
   name: { type: String, required: true },
   cycleNumber: { type: Number, required: true },
+});
+
+const GrowthLog = new Schema<IGrowthLog>({
+  img: {
+    data: { type: Buffer },
+    contentType: { type: String },
+  },
+  dateCreated: { type: Date, default: new Date() },
+  numbersOfLeaves: { type: Number, default: 0 },
+  heightInches: { type: Number, default: 0 },
+  currentStage: { type: PlantStage }
 });
 
 export const PlantSchema = new Schema<IPlant>({
@@ -46,12 +62,6 @@ export const PlantSchema = new Schema<IPlant>({
     column: { type: Number },
     row: { type: Number },
   },
-  growth: { type: [Number], default: [0] },
-  height: { type: Number, default: 0 },
-  nutrientMix: {
-    name: { type: String },
-    amount: { type: Number },
-  },
   currentStage: {
     type: PlantStage,
     default: {
@@ -59,7 +69,6 @@ export const PlantSchema = new Schema<IPlant>({
       cycleNumber: 0,
     },
   },
-  numberOfLeaves: { type: Number, default: 0 },
   hoursOfLight: { type: Number, default: 0 },
   numberOfLumensExposure: { type: Number, default: 0 },
   stages: {
@@ -97,6 +106,7 @@ export const PlantSchema = new Schema<IPlant>({
   genus: { type: String, required: true },
   species: { type: String, required: true },
   variety: { type: String },
+  growthLogs: { type: [GrowthLog] }
 });
 
 export const Plant = model<IPlant>('Plant', PlantSchema);
