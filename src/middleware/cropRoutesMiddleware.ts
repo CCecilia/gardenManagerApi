@@ -9,7 +9,7 @@ export const create = [
 ].concat(baseRouteMiddleware);
 
 export const update = [
-  checkRquiredProps(['id'])
+  checkRquiredProps(['_id'])
 ].concat(baseRouteMiddleware);
 
 export const del = [

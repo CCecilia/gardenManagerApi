@@ -1,4 +1,8 @@
 export const jsonContent = (_req, res, next) => {
-  res.setHeader('Content-Type', 'application/json');
+  try {
+    res.setHeader('Content-Type', 'application/json');
+  } catch (error) {
+    console.error(error)
+  }
   next();
 };

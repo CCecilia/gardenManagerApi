@@ -5,6 +5,7 @@ import { checkRquiredProps } from './requiredProperties';
 export const read = baseRouteMiddleware;
 
 export const create = [
+  ...baseRouteMiddleware,
   checkRquiredProps([
     'totalWaterGallons',
     'totalFloraMicroMls',
@@ -16,9 +17,12 @@ export const create = [
     'endingPh',
     'applications'
   ])
-].concat(baseRouteMiddleware);
+];
 
-export const update = [checkRquiredProps(['id'])].concat(baseRouteMiddleware);
+export const update = [...baseRouteMiddleware, checkRquiredProps(['_id'])];
 
-export const del = [checkRequiredQueryParams(['nutrientBatchId'])]
+export const del = [...baseRouteMiddleware, checkRequiredQueryParams(['nutrientBatchId'])];
 
+export const createApplication = [...baseRouteMiddleware, checkRquiredProps(['nutrientBatchId', 'amountUsed'])]
+
+export const delApplication = [...baseRouteMiddleware, checkRequiredQueryParams(['applicationId'])];

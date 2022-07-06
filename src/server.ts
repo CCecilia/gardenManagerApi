@@ -62,6 +62,8 @@ app.delete('/crop', CropRoutesMiddleware.del, CropRoutes.del);
 
 //#region NutrientBatch
 app.get('/nutrientBatch/:nutrientBatchId', NutrientBatchRoutesMiddleware.read, NutrientBatchRoutes.read);
+app.post('/nutrientBatch/application', NutrientBatchRoutesMiddleware.createApplication, NutrientBatchRoutes.createApplication);
+app.delete('/nutrientBatch/application', NutrientBatchRoutesMiddleware.delApplication, NutrientBatchRoutes.delApplication);
 app.post('/nutrientBatch', NutrientBatchRoutesMiddleware.create, NutrientBatchRoutes.create);
 app.get('/nutrientBatch', NutrientBatchRoutesMiddleware.read, NutrientBatchRoutes.readAll);
 app.put('/nutrientBatch', NutrientBatchRoutesMiddleware.update, NutrientBatchRoutes.update);

@@ -65,12 +65,15 @@ export const readAll = async (_req: TypedRequestParams<{}>, res) => {
 };
 
 export const update = async (req: TypedRequestBody<{ _id: string }>, res) => {
-  const results = await Crop.findByIdAndUpdate(req.body._id, req.body).exec().catch((error: MongoServerError) => {
+  await Crop.findByIdAndUpdate(req.body._id, req.body).exec().catch((error: MongoServerError) => {
     return res
       .status(400)
       .json({ message: error.errmsg });
   });
-  return res.status(200).json(results);
+
+  return res.status(200).json({
+    message: 'success'
+  });
 };
 
 export const del = async (req: TypedRequestQueryParams<{cropId: string}>, res) => {
