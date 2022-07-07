@@ -1,15 +1,12 @@
 import { Schema, model } from 'mongoose';
 
-interface IPlantStage {
+export interface IPlantStage {
   name: string;
   cycleNumber: number;
 }
 
 interface IGrowthLog {
-  img: {
-    data: Buffer,
-    contentType: string
-  };
+  img: string;
   dateCreated: Date;
   numbersOfLeaves: number;
   heightInches: number;
@@ -44,10 +41,7 @@ const PlantStage = new Schema<IPlantStage>({
 });
 
 const GrowthLog = new Schema<IGrowthLog>({
-  img: {
-    data: { type: Buffer },
-    contentType: { type: String },
-  },
+  img: { type: String },
   dateCreated: { type: Date, default: new Date() },
   numbersOfLeaves: { type: Number, default: 0 },
   heightInches: { type: Number, default: 0 },

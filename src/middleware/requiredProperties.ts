@@ -3,7 +3,7 @@ export const checkRquiredProps =
     if (req.body) {
       requiredProps.forEach((required: string) => {
         if (!Object.prototype.hasOwnProperty.call(req.body, required)) {
-          return res
+          res
             .status(400)
             .send({ message: `missing required parameter | ${required}` });
         }

@@ -30,8 +30,8 @@ app.use(
 );
 
 app.use(session({ secret: process.env.SESSION_SECRET! }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ limit: '2mb', extended: false }));
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms')
 );
@@ -43,6 +43,7 @@ app.post('/users/signin/', UserRoutesMiddleware.signIn, UserRoutes.signin);
 
 //#region PlantRoutes
 app.get('/plant/:plantId', PlantRoutesMiddleware.read, PlantRoutes.read);
+app.post('/plant/growthLog', PlantRoutesMiddleware.createGrowthLog, PlantRoutes.createGrowthLog);
 app.post('/plant', PlantRoutesMiddleware.create, PlantRoutes.create);
 app.get('/plant', PlantRoutesMiddleware.read, PlantRoutes.readAll);
 app.put('/plant', PlantRoutesMiddleware.update, PlantRoutes.update);

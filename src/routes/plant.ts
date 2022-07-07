@@ -1,3 +1,5 @@
+import { PlantGrowthLogCreateFormData } from './../types/plant.growthLog.create.formdata.type';
+import { TypedRequestQueryParams, TypedRequestBodyWithFiles } from './../types/request.interface';
 import { Plant } from '../models/plant';
 import { TypedRequestBody, TypedRequestParams } from 'types/request.interface';
 
@@ -75,8 +77,8 @@ export const readAll = async (_req: TypedRequestParams<{}>, res) => {
   });
 };
 
-export const update = async (req: TypedRequestBody<{ id: string }>, res) => {
-  const results = await Plant.findByIdAndUpdate(req.body.id, req.body)
+export const update = async (req: TypedRequestBody<{ _id: string }>, res) => {
+  const results = await Plant.findByIdAndUpdate(req.body._id, req.body)
     .exec()
     .catch((error: MongoServerError) => {
       return res.status(400).json({message: error.errmsg})
@@ -85,7 +87,7 @@ export const update = async (req: TypedRequestBody<{ id: string }>, res) => {
   return res.status(200).json(results);
 };
 
-export const del = async (req, res) => {
+export const del = async (req: TypedRequestQueryParams<{plantId: string}>, res) => {
   const results: any = await Plant.findByIdAndDelete(req.query.plantId).exec();
 
   if (results) {
@@ -95,4 +97,25 @@ export const del = async (req, res) => {
   return res.status(400).json({
     message: 'unknown id',
   });
+};
+
+export const createGrowthLog = async (req: TypedRequestBodyWithFiles<PlantGrowthLogCreateFormData>, res) => {
+  const plant = await Plant.findById(req.body.plantId);
+  if (plant) {
+    const newGrowthLog = {
+      numbersOfLeaves: req.body.numbersOfLeaves,
+      heightInches: req.body.heightInches,
+      currentStage: plant.currentStage,
+      dateCreated: new Date(),
+      img: req.body.img
+    };
+    plant.growthLogs.push(newGrowthLog);
+    await plant.save().catch((error: MongoServerError) => {
+      return res.status(400).json({ message: error.errmsg });
+    });
+
+    return res.status(200).json(plant?.toJSON())
+  };
+
+  return res.status(400).json({message: 'unknown plantId'})
 };

@@ -5,13 +5,26 @@ import { checkRquiredProps } from "./requiredProperties";
 export const read = baseRouteMiddleware;
 
 export const create = [
+  ...baseRouteMiddleware,
   checkRquiredProps(['genus', 'species', 'commonName', 'batch'])
-].concat(baseRouteMiddleware);
+];
 
 export const update = [
-  checkRquiredProps(['id'])
-].concat(baseRouteMiddleware);
+  ...baseRouteMiddleware,
+  checkRquiredProps(['_id'])
+];
 
 export const del = [
+  ...baseRouteMiddleware,
   checkRequiredQueryParams(['plantId'])
-].concat(baseRouteMiddleware);
+];
+
+export const createGrowthLog = [
+  ...baseRouteMiddleware,
+  checkRquiredProps([
+    'plantId',
+    'numbersOfLeaves',
+    'heightInches',
+    'img'
+  ])
+];
