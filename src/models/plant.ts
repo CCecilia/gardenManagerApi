@@ -1,3 +1,4 @@
+import { noImageAvailBase64 } from './../images/noImageAvail.base64';
 import { Schema, model } from 'mongoose';
 
 export interface IPlantStage {
@@ -6,7 +7,7 @@ export interface IPlantStage {
 }
 
 interface IGrowthLog {
-  img: string;
+  img?: string;
   dateCreated: Date;
   numbersOfLeaves: number;
   heightInches: number;
@@ -41,7 +42,7 @@ const PlantStage = new Schema<IPlantStage>({
 });
 
 const GrowthLog = new Schema<IGrowthLog>({
-  img: { type: String },
+  img: { type: String, default: noImageAvailBase64 },
   dateCreated: { type: Date, default: new Date() },
   numbersOfLeaves: { type: Number, default: 0 },
   heightInches: { type: Number, default: 0 },

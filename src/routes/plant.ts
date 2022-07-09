@@ -107,15 +107,17 @@ export const createGrowthLog = async (req: TypedRequestBodyWithFiles<PlantGrowth
       heightInches: req.body.heightInches,
       currentStage: plant.currentStage,
       dateCreated: new Date(),
-      img: req.body.img
     };
+    if (req.body.img) {
+      newGrowthLog['img'] = req.body.img;
+    }
     plant.growthLogs.push(newGrowthLog);
     await plant.save().catch((error: MongoServerError) => {
       return res.status(400).json({ message: error.errmsg });
     });
 
-    return res.status(200).json(plant?.toJSON())
+    return res.status(200).json(plant?.toJSON());
   };
 
-  return res.status(400).json({message: 'unknown plantId'})
+  return res.status(400).json({ message: 'unknown plantId' });
 };

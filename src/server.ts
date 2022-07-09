@@ -9,10 +9,12 @@ import morgan from 'morgan';
 import * as PlantRoutes from './routes/plant';
 import * as CropRoutes from './routes/crop';
 import * as NutrientBatchRoutes from './routes/nutrientBatch';
+import * as SearchRoutes from './routes/search';
 import * as UserRoutesMiddleware from './middleware/userRoutesMiddleware';
 import * as PlantRoutesMiddleware from './middleware/plantRoutesMiddleware';
 import * as CropRoutesMiddleware from './middleware/cropRoutesMiddleware';
 import * as NutrientBatchRoutesMiddleware from './middleware/nutrientBatchRoutesMiddleware';
+import * as SearchRoutesMiddleware from './middleware/searchRoutesMiddleware';
 
 dotenv.config();
 
@@ -30,8 +32,8 @@ app.use(
 );
 
 app.use(session({ secret: process.env.SESSION_SECRET! }));
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ limit: '2mb', extended: false }));
+app.use(express.json({ limit: '4mb' }));
+app.use(express.urlencoded({ limit: '4mb', extended: false }));
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms')
 );
@@ -70,6 +72,8 @@ app.get('/nutrientBatch', NutrientBatchRoutesMiddleware.read, NutrientBatchRoute
 app.put('/nutrientBatch', NutrientBatchRoutesMiddleware.update, NutrientBatchRoutes.update);
 app.delete('/nutrientBatch', NutrientBatchRoutesMiddleware.del, NutrientBatchRoutes.del);
 //#endregion NutrientBatchRoutes
+
+app.get('/search', SearchRoutesMiddleware.search, SearchRoutes.search);
 
 app.listen(process.env.PORT, function () {
   console.log('Server is running on Port: ' + process.env.PORT);
