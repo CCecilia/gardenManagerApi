@@ -5,24 +5,29 @@ import { checkRequiredQueryParams } from './requiredQueryParams';
 export const read = baseRouteMiddleware;
 
 export const create = [
+  ...baseRouteMiddleware,
   checkRquiredProps(['name', 'plants'])
-].concat(baseRouteMiddleware);
+];
 
 export const update = [
+  ...baseRouteMiddleware,
   checkRquiredProps(['_id'])
-].concat(baseRouteMiddleware);
+];
 
 export const del = [
+  ...baseRouteMiddleware,
   checkRequiredQueryParams(['cropId'])
-].concat(baseRouteMiddleware);
+];
 
 export const readCropPlantData = [
+  ...baseRouteMiddleware,
   checkRequiredQueryParams(['plantIds']),
-].concat(baseRouteMiddleware);
+];
 
 export const readNutrientBatchData = [
+  ...baseRouteMiddleware,
   checkRequiredQueryParams(['nutrientBatchIds']),
-].concat(baseRouteMiddleware);
+];
 
 // export const addNutrientBatch = [
 //   checkRquiredProps([
