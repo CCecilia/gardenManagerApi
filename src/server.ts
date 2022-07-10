@@ -10,11 +10,13 @@ import * as PlantRoutes from './routes/plant';
 import * as CropRoutes from './routes/crop';
 import * as NutrientBatchRoutes from './routes/nutrientBatch';
 import * as SearchRoutes from './routes/search';
+import * as ChartDataRoutes from './routes/chartData';
 import * as UserRoutesMiddleware from './middleware/userRoutesMiddleware';
 import * as PlantRoutesMiddleware from './middleware/plantRoutesMiddleware';
 import * as CropRoutesMiddleware from './middleware/cropRoutesMiddleware';
 import * as NutrientBatchRoutesMiddleware from './middleware/nutrientBatchRoutesMiddleware';
 import * as SearchRoutesMiddleware from './middleware/searchRoutesMiddleware';
+import * as ChartDataRoutesMiddleware from './middleware/chartDataRoutesMiddleware';
 
 dotenv.config();
 
@@ -27,7 +29,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000', 'http://192.168.50.112:3000'],
   })
 );
 
@@ -75,6 +77,9 @@ app.delete('/nutrientBatch', NutrientBatchRoutesMiddleware.del, NutrientBatchRou
 
 app.get('/search', SearchRoutesMiddleware.search, SearchRoutes.search);
 
-app.listen(process.env.PORT, function () {
+app.get('/chartData/plants/growthData', ChartDataRoutesMiddleware.plantGrowthChartData, ChartDataRoutes.plantGrowthChartData);
+app.get('/chartData/crops/growthData', ChartDataRoutesMiddleware.cropGrowthOverTime, ChartDataRoutes.cropGrowthChartData);
+
+app.listen(process.env.PORT as any, '192.168.50.112', function () {
   console.log('Server is running on Port: ' + process.env.PORT);
 });
