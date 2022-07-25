@@ -56,15 +56,18 @@ export const signin = async (req: TypedRequestBody<SignInFormData>, res) => {
     query.refreshAccessToken();
     if (result) {
       res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json({
-        id: query.id,
-        email: query.email,
-        accessToken: query.accessToken,
-      });
+      return res.status(200)
+        .json({
+          success: true,
+          userData: query,
+          message: 'successful sign in'
+        });
     }
   }
 
   return res.status(400).json({
+    success: false,
+    userData: {},
     message: 'email/password incorrect',
   });
 };
