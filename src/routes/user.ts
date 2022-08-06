@@ -3,11 +3,28 @@ import { User } from '../models/user';
 import { MongoServerError } from 'mongodb';
 import { SignInFormData } from 'types/signInFormData.type';
 import { TypedRequestBody } from 'types/request.interface';
+import { ISignUpFormData } from 'types/signUpFormData.interface';
 
 const jwt = require('jsonwebtoken');
 
-export const signup = async (req: TypedRequestBody<SignInFormData>, res) => {
-  const { email, password } = req.body;
+export const signup = async (req: TypedRequestBody<ISignUpFormData>, res) => {
+  const { email, password, confirmPassword } = req.body;
+
+  if (password.length < 8 || confirmPassword.length < 8) {
+    return res.status(400).json({
+      success: false,
+      userData: {},
+      message: 'password incorrect',
+    });
+  };
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({
+      success: false,
+      userData: {},
+      message: 'password and confirm do not match',
+    });
+  };
 
   const user = new User({
     email,
@@ -27,10 +44,10 @@ export const signup = async (req: TypedRequestBody<SignInFormData>, res) => {
     if (error.code === 11000) {
       errmsg = 'email already in use';
       errCode = 400;
+    } else {
+      errmsg = error.message;
+      errCode = 400;
     }
-
-    errmsg = error.message;
-    errCode = 400;
   });
 
   if (errmsg && errCode) {
